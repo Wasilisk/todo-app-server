@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt')
 const ApiError = require('../errors/apiError')
 const UserRepository = require('../repositories/userRepository')
+const CategoryRepository = require('../repositories/categoryRepository')
 
 class UserService {
     async registration(email, password, username) {
@@ -9,8 +10,8 @@ class UserService {
             throw ApiError.badRequest(`Користувач з поштовим адресом ${email} вже існує`);
         }
         const hashPassword = await bcrypt.hash(password, 5);
-
         const user = await UserRepository.createUser(email, hashPassword, username);
+        await CategoryRepository.createCategory("General", user.id)
 
         return user;
     }
